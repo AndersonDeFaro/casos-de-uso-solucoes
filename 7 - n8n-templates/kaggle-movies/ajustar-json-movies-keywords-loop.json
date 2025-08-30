@@ -1,0 +1,278 @@
+{
+  "_id": {
+    "$oid": "68b33c3ed5da6c028603a681"
+  },
+  "id": "cL8nPSjkuTew5Xju",
+  "active": false,
+  "connections": {
+    "exec": {
+      "main": [
+        [
+          {
+            "node": "incr",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "incr": {
+      "main": [
+        [
+          {
+            "node": "Find - keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pagATUAL": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - keywords": {
+      "main": [
+        [
+          {
+            "node": "Update - keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find - keywords": {
+      "main": [
+        [
+          {
+            "node": "Code - keywords",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "pagATUAL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-30T17:10:31.345Z",
+  "isArchived": false,
+  "meta": null,
+  "name": "ajustar-json-movies-keywords-loop",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1088,
+        144
+      ],
+      "id": "458ec5d2-8ecf-40b2-a2f9-9d1c21f6c9f7",
+      "name": "exec"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b51d035-58b1-4abf-a364-30987b5eebd7",
+              "name": "nextLimit",
+              "value": "=100",
+              "type": "number"
+            },
+            {
+              "id": "a5b298f6-bc16-4ed4-9873-91ae714d4309",
+              "name": "nextSkip",
+              "value": "={{ $node[\"exec\"].json[\"skip\"] + 100}}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -832,
+        144
+      ],
+      "id": "9b179a2a-3d45-4fdd-b6a5-4d707ad8d570",
+      "name": "incr"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b51d035-58b1-4abf-a364-30987b5eebd7",
+              "name": "limit",
+              "value": "={{ $('incr').first().json.nextLimit }}",
+              "type": "number"
+            },
+            {
+              "id": "a5b298f6-bc16-4ed4-9873-91ae714d4309",
+              "name": "skip",
+              "value": "={{ $('incr').first().json.nextSkip }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -256,
+        224
+      ],
+      "id": "73b77af2-6932-4075-af24-f7495646660e",
+      "name": "pagATUAL"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "cL8nPSjkuTew5Xju",
+          "mode": "list",
+          "cachedResultName": "ajustar-json-movies-keywords-loop"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        336,
+        224
+      ],
+      "id": "f341b0b6-eafb-4416-9914-0f6d0b96dc84",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        224
+      ],
+      "id": "5d6d407a-c117-4441-b0fe-616d17978d9a",
+      "name": "Remove Duplicates"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Código para usar no node \"Code\" do n8n\n// Configure o node para \"Run Once for Each Item\"\n\nconst data = $input.item.json;\n\ntry {\n  // Verifica se o campo keywords existe e é uma string\n  if (data.keywords && typeof data.keywords === 'string') {\n    // Remove espaços em branco no início e fim\n    let keywordsString = data.keywords.trim();\n    \n    // Solução robusta para converter Python dict string para JSON válido\n    // Esta regex substitui aspas simples por duplas, exceto quando estão dentro de valores de string\n    keywordsString = keywordsString.replace(/'/g, (match, offset, string) => {\n      // Verifica se a aspa está dentro de um valor (entre : e , ou : e })\n      const beforeColon = string.lastIndexOf(':', offset);\n      const beforeComma = string.lastIndexOf(',', offset);\n      const beforeBrace = string.lastIndexOf('{', offset);\n      \n      const afterColon = string.indexOf(':', offset);\n      const afterComma = string.indexOf(',', offset);\n      const afterBrace = string.indexOf('}', offset);\n      \n      // Se estamos dentro de um valor (depois de : e antes de , ou })\n      const startOfValue = Math.max(beforeColon, beforeComma, beforeBrace);\n      const endOfValue = Math.min(\n        afterComma === -1 ? Infinity : afterComma,\n        afterBrace === -1 ? Infinity : afterBrace\n      );\n      \n      // Se a posição atual está entre : e , (ou }), pode ser uma aspa dentro do valor\n      if (beforeColon > beforeComma && beforeColon > beforeBrace && \n          (afterComma > offset || afterBrace > offset)) {\n        \n        // Verifica se é uma contração (letra antes e depois da aspa)\n        const charBefore = string[offset - 1];\n        const charAfter = string[offset + 1];\n        \n        if (/[a-zA-Z]/.test(charBefore) && /[a-zA-Z]/.test(charAfter)) {\n          return '\\\\\"'; // Escapa a aspa se for uma contração\n        }\n      }\n      \n      return '\"'; // Substitui por aspa dupla nos outros casos\n    });\n    \n    // Tenta fazer o parse\n    let keywordsArray;\n    try {\n      keywordsArray = JSON.parse(keywordsString);\n    } catch (firstError) {\n      // Se falhou, tenta uma abordagem mais agressiva\n      keywordsString = data.keywords.trim();\n      \n      // Método alternativo: usando eval com segurança limitada\n      // Substitui apenas as estruturas específicas\n      keywordsString = keywordsString\n        .replace(/'/g, '\"')  // Troca aspas simples por duplas\n        .replace(/(\\w)\\\"(\\w)/g, '$1\\'$2')  // Volta aspas simples dentro de palavras\n        .replace(/\\\"\\s*:\\s*\\\"/g, '\": \"')  // Garante espaçamento correto\n        .replace(/\\\"\\s*,\\s*\\\"/g, '\", \"'); // Garante espaçamento correto\n      \n      try {\n        keywordsArray = JSON.parse(keywordsString);\n      } catch (secondError) {\n        // Última tentativa: limpar caracteres problemáticos\n        keywordsString = data.keywords.trim()\n          .replace(/'/g, '\"')\n          .replace(/(\\w)\"(\\w)/g, '$1&apos;$2')  // Substitui temporariamente\n          .replace(/&apos;/g, \"'\");  // Volta como aspa simples\n        \n        keywordsArray = JSON.parse(keywordsString);\n      }\n    }\n    \n    // Atualiza o campo keywords no objeto\n    data.keywords = keywordsArray;\n  }\n  \n  return data;\n  \n} catch (error) {\n  // Em caso de erro, retorna o item original com informação do erro\n  console.error(`Erro ao processar item com ID ${data.id}:`, error.message);\n  \n  return {\n    ...data,\n    error: `Erro ao converter keywords: ${error.message}`\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "eb5a3886-b609-43b6-93de-acde586d8157",
+      "name": "Code - keywords"
+    },
+    {
+      "parameters": {
+        "collection": "keywords",
+        "options": {
+          "limit": "={{ $json.nextLimit }}",
+          "skip": "={{ $json.nextSkip }}",
+          "sort": "{ \"_id\": 1 }"
+        }
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        -624,
+        144
+      ],
+      "id": "16ccb6ec-833c-4848-95d1-db6bdf64ce6f",
+      "name": "Find - keywords",
+      "credentials": {
+        "mongoDb": {
+          "id": "B0VabmKxl1R4B1fb",
+          "name": "MongoDB - Filmes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "collection": "keywords",
+        "updateKey": "_id",
+        "fields": "keywords",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "bdcd14e1-0850-419a-b1f0-385e0b998325",
+      "name": "Update - keywords",
+      "credentials": {
+        "mongoDb": {
+          "id": "B0VabmKxl1R4B1fb",
+          "name": "MongoDB - Filmes"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "exec": [
+      {
+        "json": {
+          "limit": 0,
+          "skip": -100
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-30T20:46:20.166Z",
+  "versionId": "82ab35cc-d547-40fd-93f8-158495d66260"
+}

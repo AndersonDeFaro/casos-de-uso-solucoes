@@ -1,0 +1,280 @@
+{
+  "_id": {
+    "$oid": "68b3666dd5da6c0286396d13"
+  },
+  "id": "3DKShSNP6O6CEtti",
+  "active": false,
+  "connections": {
+    "Find - movies_metadata": {
+      "main": [
+        [
+          {
+            "node": "code - movies_metadata",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "pagATUAL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "code - movies_metadata": {
+      "main": [
+        [
+          {
+            "node": "Update - movies_metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "exec": {
+      "main": [
+        [
+          {
+            "node": "incr",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "incr": {
+      "main": [
+        [
+          {
+            "node": "Find - movies_metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pagATUAL": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-30T20:37:17.008Z",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "ajustar-json-movies-metadata-loop",
+  "nodes": [
+    {
+      "parameters": {
+        "collection": "movies_metadata",
+        "options": {
+          "limit": "={{ $json.nextLimit }}",
+          "skip": "={{ $json.nextSkip }}",
+          "sort": "{ \"_id\": 1 }"
+        }
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        80
+      ],
+      "id": "65489f90-3d9a-4297-9c7d-ec998a7d4211",
+      "name": "Find - movies_metadata",
+      "credentials": {
+        "mongoDb": {
+          "id": "B0VabmKxl1R4B1fb",
+          "name": "MongoDB - Filmes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "function safeParse(value) {\n  if (typeof value === 'string') {\n    try {\n      return JSON.parse(value.replace(/'/g, '\"'));\n    } catch (e) {\n      return value; // se não conseguir parsear, mantém original\n    }\n  }\n  return value; // já é objeto/array, não precisa converter\n}\n\nreturn {\n  ...item.json,\n  genres: safeParse(item.json.genres),\n  belongs_to_collection: safeParse(item.json.belongs_to_collection),\n  production_companies: safeParse(item.json.production_companies),\n  production_countries: safeParse(item.json.production_countries),\n  spoken_languages: safeParse(item.json.spoken_languages),\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        -80
+      ],
+      "id": "49a2cedb-a552-4923-ba5c-a8ddb4cfe03a",
+      "name": "code - movies_metadata"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "collection": "movies_metadata",
+        "updateKey": "_id",
+        "fields": "belongs_to_collection,genres,production_companies,production_countries,spoken_languages",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        -80
+      ],
+      "id": "5da85a58-6c0a-412e-b3bf-81111bf4d049",
+      "name": "Update - movies_metadata",
+      "credentials": {
+        "mongoDb": {
+          "id": "B0VabmKxl1R4B1fb",
+          "name": "MongoDB - Filmes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        208
+      ],
+      "id": "9392dcf4-c87c-4bad-96e7-7a29755cfe45",
+      "name": "exec"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b51d035-58b1-4abf-a364-30987b5eebd7",
+              "name": "nextLimit",
+              "value": "=100",
+              "type": "number"
+            },
+            {
+              "id": "a5b298f6-bc16-4ed4-9873-91ae714d4309",
+              "name": "nextSkip",
+              "value": "={{ $node[\"exec\"].json[\"skip\"] + 100}}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        48,
+        208
+      ],
+      "id": "51a8ff07-4ca2-4b86-870a-e58a0b0deeb6",
+      "name": "incr"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b51d035-58b1-4abf-a364-30987b5eebd7",
+              "name": "limit",
+              "value": "={{ $('incr').first().json.nextLimit }}",
+              "type": "number"
+            },
+            {
+              "id": "a5b298f6-bc16-4ed4-9873-91ae714d4309",
+              "name": "skip",
+              "value": "={{ $('incr').first().json.nextSkip }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        288
+      ],
+      "id": "bff05d67-3623-44d2-858f-340a874afac8",
+      "name": "pagATUAL"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "3DKShSNP6O6CEtti",
+          "mode": "list",
+          "cachedResultName": "ajustar-json-movies-metadata-loop"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1264,
+        288
+      ],
+      "id": "5fe0fc1f-9528-408f-ae43-f5baa0e14f91",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        880,
+        288
+      ],
+      "id": "db816189-7a60-4642-83ce-638754231c69",
+      "name": "Remove Duplicates"
+    }
+  ],
+  "pinData": {
+    "exec": [
+      {
+        "json": {
+          "limit": 0,
+          "skip": -100
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-30T20:53:45.332Z",
+  "versionId": "ba10722f-6562-43a6-b9b5-32ea22bd56b9"
+}

@@ -1,0 +1,282 @@
+{
+  "_id": {
+    "$oid": "68b0b54fd5da6c0286ec99f7"
+  },
+  "id": "9JvojgpZjb1DITrU",
+  "active": false,
+  "connections": {
+    "Find - credits": {
+      "main": [
+        [
+          {
+            "node": "Code - credits",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "pagATUAL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - credits": {
+      "main": [
+        [
+          {
+            "node": "Update - credits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "exec": {
+      "main": [
+        [
+          {
+            "node": "incr",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "incr": {
+      "main": [
+        [
+          {
+            "node": "Find - credits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pagATUAL": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-28T19:02:48.459Z",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "ajustar-json-movies-credits-loop",
+  "nodes": [
+    {
+      "parameters": {
+        "collection": "credits",
+        "options": {
+          "limit": "={{ $json.nextLimit }}",
+          "skip": "={{ $json.nextSkip }}",
+          "sort": "{ \"_id\": 1 }"
+        }
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        304,
+        208
+      ],
+      "id": "467142af-3bb4-4523-a564-4002529f6312",
+      "name": "Find - credits",
+      "credentials": {
+        "mongoDb": {
+          "id": "B0VabmKxl1R4B1fb",
+          "name": "MongoDB - Filmes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Código N8N para converter campos cast e crew de string para array/object\n// Configurar o nó Code para \"Run Once for Each Item\"\n\n// Função para converter string para array de objetos\nfunction parseStringToArray(stringData) {\n  try {\n    // Remove quebras de linha e espaços extras\n    let cleanString = stringData.replace(/\\n/g, '').trim();\n    \n    // Substituir None por null\n    cleanString = cleanString.replace(/None/g, 'null');\n    \n    // Substituir True/False por true/false se existirem\n    cleanString = cleanString.replace(/True/g, 'true');\n    cleanString = cleanString.replace(/False/g, 'false');\n    \n    // Usar Function constructor para avaliar a string Python-like\n    const parsedArray = new Function('return ' + cleanString)();\n    \n    return Array.isArray(parsedArray) ? parsedArray : [];\n    \n  } catch (error) {\n    console.error('Erro no parse principal:', error.message);\n    \n    // Fallback: tentar conversão manual de aspas\n    try {\n      let fallbackString = stringData.replace(/\\n/g, '').trim();\n      fallbackString = fallbackString.replace(/None/g, 'null');\n      fallbackString = fallbackString.replace(/'/g, '\"');\n      \n      const fallbackArray = JSON.parse(fallbackString);\n      return Array.isArray(fallbackArray) ? fallbackArray : [];\n      \n    } catch (fallbackError) {\n      console.error('Fallback falhou:', fallbackError.message);\n      return [];\n    }\n  }\n}\n\n// Processar APENAS o item atual (não todos os itens)\nconst data = $input.item.json;\n\nconsole.log('Processando item ID:', data.id);\n\n// Converter cast de string para array\nlet castArray = [];\nif (data.cast && typeof data.cast === 'string') {\n  console.log('Convertendo cast...');\n  castArray = parseStringToArray(data.cast);\n  console.log('Cast convertido com', castArray.length, 'itens');\n} else if (Array.isArray(data.cast)) {\n  castArray = data.cast;\n}\n\n// Converter crew de string para array  \nlet crewArray = [];\nif (data.crew && typeof data.crew === 'string') {\n  console.log('Convertendo crew...');\n  crewArray = parseStringToArray(data.crew);\n  console.log('Crew convertido com', crewArray.length, 'itens');\n} else if (Array.isArray(data.crew)) {\n  crewArray = data.crew;\n}\n\n// Retornar item processado\nreturn {\n  ...data,\n  cast: castArray,\n  crew: crewArray,\n  cast_count: castArray.length,\n  crew_count: crewArray.length,\n  conversion_timestamp: new Date().toISOString(),\n  conversion_status: {\n    cast_converted: typeof data.cast === 'string' && castArray.length > 0,\n    crew_converted: typeof data.crew === 'string' && crewArray.length > 0\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        64
+      ],
+      "id": "2e5d1dcb-267f-43a1-9b19-2957b666d076",
+      "name": "Code - credits"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "collection": "credits",
+        "updateKey": "_id",
+        "fields": "cast,crew",
+        "options": {
+          "dateFields": "conversion_timestamp"
+        }
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        64
+      ],
+      "id": "80738ebb-068d-47b1-98ef-ae119d5f9a9b",
+      "name": "Update - credits",
+      "credentials": {
+        "mongoDb": {
+          "id": "B0VabmKxl1R4B1fb",
+          "name": "MongoDB - Filmes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        208
+      ],
+      "id": "48d8f289-dfe4-428f-979b-767e69acefe5",
+      "name": "exec"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b51d035-58b1-4abf-a364-30987b5eebd7",
+              "name": "nextLimit",
+              "value": "=100",
+              "type": "number"
+            },
+            {
+              "id": "a5b298f6-bc16-4ed4-9873-91ae714d4309",
+              "name": "nextSkip",
+              "value": "={{ $node[\"exec\"].json[\"skip\"] + 100}}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        48,
+        208
+      ],
+      "id": "6d006e76-a336-437c-8ebe-d63bc27cacb9",
+      "name": "incr"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b51d035-58b1-4abf-a364-30987b5eebd7",
+              "name": "limit",
+              "value": "={{ $('incr').first().json.nextLimit }}",
+              "type": "number"
+            },
+            {
+              "id": "a5b298f6-bc16-4ed4-9873-91ae714d4309",
+              "name": "skip",
+              "value": "={{ $('incr').first().json.nextSkip }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        288
+      ],
+      "id": "36f6a959-1235-46c9-8d89-1efbe9b62836",
+      "name": "pagATUAL"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "9JvojgpZjb1DITrU",
+          "mode": "list",
+          "cachedResultName": "ajustar-json-movies-loop"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1264,
+        288
+      ],
+      "id": "329b1420-9a42-4165-891d-653df0634a99",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        880,
+        288
+      ],
+      "id": "6a91327d-4f2f-4670-8e05-9376b671153a",
+      "name": "Remove Duplicates"
+    }
+  ],
+  "pinData": {
+    "exec": [
+      {
+        "json": {
+          "limit": 0,
+          "skip": -100
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-30T20:45:10.621Z",
+  "versionId": "3476e2dd-c503-4d68-824e-9450c55c413e"
+}
