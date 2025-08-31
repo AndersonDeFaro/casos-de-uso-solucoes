@@ -58,7 +58,7 @@
       "main": [
         [
           {
-            "node": "Wait",
+            "node": "Remove Duplicates",
             "type": "main",
             "index": 0
           }
@@ -76,22 +76,22 @@
         ]
       ]
     },
-    "Wait": {
+    "exec": {
       "main": [
         [
           {
-            "node": "Execute Workflow",
+            "node": "incrPag",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "exec": {
+    "Remove Duplicates": {
       "main": [
         [
           {
-            "node": "incrPag",
+            "node": "Execute Workflow",
             "type": "main",
             "index": 0
           }
@@ -124,7 +124,7 @@
       "typeVersion": 4.2,
       "position": [
         -240,
-        -340
+        -336
       ],
       "id": "4e72e235-ed1e-4700-9a1c-e36eaace9a95",
       "name": "HTTP - ListarOrgaos",
@@ -168,7 +168,7 @@
       "typeVersion": 2.2,
       "position": [
         0,
-        -340
+        -336
       ],
       "id": "3ad39bca-2d63-41dc-84c5-fda867ecdb5a",
       "name": "Tem Dados"
@@ -214,8 +214,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -520,
-        -220
+        -528,
+        -224
       ],
       "id": "5146e0d9-f271-49a4-b99f-e80491d11450",
       "name": "incrPag"
@@ -244,8 +244,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        1020,
-        20
+        1056,
+        32
       ],
       "id": "1b1141e5-cf00-4a64-905d-9f34d4a89248",
       "name": "Execute Workflow"
@@ -268,7 +268,7 @@
       "typeVersion": 3.4,
       "position": [
         560,
-        20
+        32
       ],
       "id": "1636b3ba-8942-4a60-9a59-11c26d299f84",
       "name": "pagATUAL"
@@ -282,24 +282,10 @@
       "typeVersion": 3.2,
       "position": [
         320,
-        20
+        32
       ],
       "id": "a57ac3a6-32d0-4bb5-adf7-bc5bd47e8a64",
       "name": "Merge"
-    },
-    {
-      "parameters": {
-        "amount": 15
-      },
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
-      "position": [
-        780,
-        20
-      ],
-      "id": "96020f62-ca67-4606-b5ec-6fedf83f59a0",
-      "name": "Wait",
-      "webhookId": "625b393e-2759-40df-9c6f-be292066e598"
     },
     {
       "parameters": {
@@ -308,11 +294,24 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -740,
-        -220
+        -736,
+        -224
       ],
       "id": "ba5f54d1-b5cc-4dfc-bcc2-46c36b1fe67d",
       "name": "exec"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        768,
+        32
+      ],
+      "id": "06ae7f80-4763-4ad6-a9c7-277b179a38a9",
+      "name": "Remove Duplicates"
     }
   ],
   "pinData": {},
@@ -341,6 +340,6 @@
     }
   ],
   "triggerCount": 0,
-  "updatedAt": "2025-08-07T00:33:41.597Z",
-  "versionId": "d8a6a0e7-942b-462d-9d87-db9a6a6d6970"
+  "updatedAt": "2025-08-31T13:53:38.145Z",
+  "versionId": "4cbbc596-1635-4d3b-8380-33fc529480da"
 }
