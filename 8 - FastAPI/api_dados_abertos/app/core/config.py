@@ -23,9 +23,8 @@ class Settings(BaseSettings):
     mongo_host: str = Field(env="MONGO_HOST")
     mongo_port: int = Field(default=27017, env="MONGO_PORT")
     mongo_db: str = Field(env="MONGO_DB")
-    mongo_user: Optional[str] = Field(default=None, env="MONGO_USER")
-    mongo_password: Optional[str] = Field(default=None, env="MONGO_PASSWORD")
-    mongo_url: str = Field(env="MONGO_URL")
+    mongo_user: str = Field(default=None, env="MONGO_USER")
+    mongo_password: str = Field(default=None, env="MONGO_PASSWORD")
     
     # JWT
     jwt_secret_key: str = Field(env="JWT_SECRET_KEY")
@@ -46,7 +45,16 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.environment.lower() == "production"
-
+    
+    @property
+    def mongo_url(self) -> str:
+        """
+        Gera a URL de conexão do MongoDB.
+        """
+        if self.mongo_user and self.mongo_password:
+            return f"mongodb://{self.mongo_user}:{self.mongo_password}@{self.mongo_host}:{self.mongo_port}/{self.mongo_db}"
+        else:
+            return f"mongodb://{self.mongo_host}:{self.mongo_port}/{self.mongo_db}"
 
 # Instância global das configurações
 settings = Settings()
