@@ -6,6 +6,7 @@ class User(Base):
     Modelo SQLAlchemy para a tabela 'users' no banco de dados.
     """
     __tablename__ = "users"
+    __table_args__ = {'schema': 'api'}
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
