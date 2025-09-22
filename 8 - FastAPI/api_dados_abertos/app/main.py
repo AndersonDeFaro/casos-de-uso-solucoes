@@ -5,7 +5,7 @@ import logging
 
 from app.core.config import settings
 from app.db.session import (
-    connect_to_mongo, 
+    get_mongo_db, 
     close_mongo_connection,
     connect_to_mongo_sync,
     close_mongo_sync_connection,
@@ -30,20 +30,22 @@ async def lifespan(app: FastAPI):
     logger.info("Tabelas PostgreSQL criadas/verificadas")
     
     # Conectar ao MongoDB
-    await connect_to_mongo()
-    connect_to_mongo_sync()
-    
+    # Verifique a versão do Motor que você está usando (síncrona ou assíncrona)
+    # Apenas chame a que for necessária.
+    # Exemplo com Motor: await connect_to_mongo()
+    # Exemplo com PyMongo: connect_to_mongo_sync()
     logger.info("Aplicação iniciada com sucesso")
     
     yield
     
     # Shutdown
     logger.info("Encerrando aplicação...")
-    await close_mongo_connection()
-    close_mongo_sync_connection()
+    # Fechar conexões ao MongoDB, se necessário
+    # Exemplo: await close_mongo_connection()
+    # Exemplo: close_mongo_sync_connection()
     logger.info("Aplicação encerrada")
 
-# Criar instância do FastAPI
+# Criar instância do FastAPI no nível superior do arquivo
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,

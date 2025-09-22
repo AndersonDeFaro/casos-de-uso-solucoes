@@ -10,14 +10,15 @@ Este diretório contém a implementação de uma API utilizando o framework [Fas
 ├── /app
 	├── /api
 	│   ├── /endpoints
+	│   │   ├── /deputado_federal
+	│   │   │   ├── __init__.py
+	│   │   │   ├── estado.py
+  │   │   │   └── router.py
 	│   │   ├── /system_a
 	│   │   │   ├── __init__.py
 	│   │   │   ├── users.py
-	│   │   │   └── products.py
-	│   │   ├── /system_b
-	│   │   │   ├── __init__.py
-	│   │   │   ├── clients.py
-	│   │   │   └── orders.py
+	│   │   │   ├── products.py
+  │   │   │   └── router.py
 	│   │   ├── __init__.py
 	│   │   └── router.py
 │   ├── /core
