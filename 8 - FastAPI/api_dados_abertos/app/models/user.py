@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean
-from app.db.base import Base
-
+# Importa a classe Base do novo caminho para o PostgreSQL
+from app.db.postgres.base import Base
 class User(Base):
     """
     Modelo SQLAlchemy para a tabela 'users' no banco de dados.

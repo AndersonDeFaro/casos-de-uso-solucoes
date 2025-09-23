@@ -4,7 +4,9 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List
 
 from app.core.dependencies import get_current_user
-from app.db.session import get_db, get_mongo_db
+# A importação do SQLAlchemy (PostgreSQL) agora vem de seu próprio módulo
+from app.db.postgres.session import get_db
+from app.db.mongodb.session import get_async_mongo_db as get_mongo_db
 from app.schemas.user import UserCreate, UserResponse
 from app.services.user_service import UserService
 

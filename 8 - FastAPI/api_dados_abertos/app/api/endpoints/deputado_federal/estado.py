@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from typing import Collection
-from app.db.session import get_mongo_db
+from app.db.mongodb.session import get_async_mongo_db as get_mongo_db
+
 
 router = APIRouter()
 

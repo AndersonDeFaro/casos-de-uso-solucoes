@@ -6,7 +6,10 @@ from jose import JWTError, jwt
 from typing import Optional
 
 from app.core.config import settings
-from app.db.session import get_db, get_mongo_db
+# A importação do SQLAlchemy (PostgreSQL) agora vem de seu próprio módulo
+from app.db.postgres.session import get_db
+from app.db.mongodb.session import get_async_mongo_db as get_mongo_db
+
 
 # Security
 security = HTTPBearer()

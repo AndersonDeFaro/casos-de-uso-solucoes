@@ -4,14 +4,15 @@ from contextlib import asynccontextmanager
 import logging
 
 from app.core.config import settings
-from app.db.session import (
-    get_mongo_db, 
-    close_mongo_connection,
-    connect_to_mongo_sync,
-    close_mongo_sync_connection,
-    create_tables
-)
 from app.api.endpoints.router import api_router
+
+# --- Importações corrigidas ---
+# Importa as funções de gerenciamento de sessão do PostgreSQL
+from app.db.postgres.session import create_tables
+# Importa as funções de gerenciamento de sessão assíncrona do MongoDB
+from app.db.mongodb.session import connect_to_mongo_async, close_mongo_async_connection
+# --- Fim das importações corrigidas ---
+
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -29,21 +30,19 @@ async def lifespan(app: FastAPI):
     create_tables()
     logger.info("Tabelas PostgreSQL criadas/verificadas")
     
-    # Conectar ao MongoDB
-    # Verifique a versão do Motor que você está usando (síncrona ou assíncrona)
-    # Apenas chame a que for necessária.
-    # Exemplo com Motor: await connect_to_mongo()
-    # Exemplo com PyMongo: connect_to_mongo_sync()
-    logger.info("Aplicação iniciada com sucesso")
-    
-    yield
-    
-    # Shutdown
-    logger.info("Encerrando aplicação...")
-    # Fechar conexões ao MongoDB, se necessário
-    # Exemplo: await close_mongo_connection()
-    # Exemplo: close_mongo_sync_connection()
-    logger.info("Aplicação encerrada")
+    # Conectar ao MongoDB de forma assíncrona
+    try:
+        await connect_to_mongo_async()
+        logger.info("Conexão assíncrona com MongoDB estabelecida.")
+        
+        logger.info("Aplicação iniciada com sucesso")
+        yield
+    finally:
+        # Shutdown
+        logger.info("Encerrando aplicação...")
+        await close_mongo_async_connection()
+        logger.info("Conexão assíncrona com MongoDB fechada.")
+        logger.info("Aplicação encerrada")
 
 # Criar instância do FastAPI no nível superior do arquivo
 app = FastAPI(
