@@ -1,4 +1,3 @@
-# app/api/endpoints/system_a/router.py
 from fastapi import APIRouter
 from . import users
 from . import products

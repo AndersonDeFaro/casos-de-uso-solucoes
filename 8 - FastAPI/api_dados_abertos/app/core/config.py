@@ -1,7 +1,6 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 from typing import Optional
-import os
 
 
 class Settings(BaseSettings):
@@ -10,14 +9,13 @@ class Settings(BaseSettings):
     app_version: str = Field(default="1.0.0", env="APP_VERSION")
     debug: bool = Field(default=False, env="DEBUG")
     secret_key: str = Field(env="SECRET_KEY")
-    
+
     # PostgreSQL
     postgres_host: str = Field(env="POSTGRES_HOST")
     postgres_port: int = Field(default=5432, env="POSTGRES_PORT")
     postgres_db: str = Field(env="POSTGRES_DB")
     postgres_user: str = Field(env="POSTGRES_USER")
     postgres_password: str = Field(env="POSTGRES_PASSWORD")
-    database_url: str = Field(env="DATABASE_URL")
     
     # MongoDB
     mongo_host: str = Field(env="MONGO_HOST")
@@ -33,11 +31,16 @@ class Settings(BaseSettings):
     
     # Ambiente
     environment: str = Field(default="development", env="ENVIRONMENT")
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
 
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    @property
+    def database_url(self) -> str:
+        """
+        Gera a URL de conexão do PostgreSQL.
+        """
+        return f"postgresql://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
+    
     @property
     def is_development(self) -> bool:
         return self.environment.lower() == "development"
@@ -49,10 +52,10 @@ class Settings(BaseSettings):
     @property
     def mongo_url(self) -> str:
         """
-        Gera a URL de conexão do MongoDB.
+        Gera a URL de conexão do MongoDB com authSource.
         """
         if self.mongo_user and self.mongo_password:
-            return f"mongodb://{self.mongo_user}:{self.mongo_password}@{self.mongo_host}:{self.mongo_port}/{self.mongo_db}"
+            return f"mongodb://{self.mongo_user}:{self.mongo_password}@{self.mongo_host}:{self.mongo_port}/{self.mongo_db}?authSource=admin"
         else:
             return f"mongodb://{self.mongo_host}:{self.mongo_port}/{self.mongo_db}"
 
