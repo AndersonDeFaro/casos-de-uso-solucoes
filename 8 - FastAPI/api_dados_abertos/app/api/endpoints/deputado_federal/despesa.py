@@ -30,15 +30,9 @@ async def read_despesas_deputado(
     # Acessa a coleção "despesas-deputados"
     despesas_collection = mongo_db["despesas-deputados"]
     
-    # Prepara a consulta para buscar por nome, ano e mês
-    # Ajusta a string do nome para buscar por nomes parciais e sem acentos
-    # A sua query original já usava um regex insensível a maiúsculas/minúsculas.
-    # Agora vamos remover os acentos da string de entrada para uma busca mais robusta.
-    import unicodedata
-    nome_sem_acento = unicodedata.normalize('NFKD', nome).encode('ascii', 'ignore').decode('utf-8')
-    
+  
     query = {
-        "deputado.nome": {"$regex": f"{nome_sem_acento}", "$options": "i"},
+        "deputado.nome": {"$regex": f"{nome}", "$options": "i"},
         "periodoDespesa.ano": ano,
         "periodoDespesa.mes": mes
     }
