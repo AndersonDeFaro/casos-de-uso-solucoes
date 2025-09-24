@@ -1,10 +1,11 @@
 from typing import Optional
 from sqlalchemy.orm import Session
-from app.schemas.user import UserCreate, UserResponse
-from app.models.user import User # Assumindo que você tem um modelo SQLAlchemy para o usuário
+from app.schemas.users_api.user import UserCreate, UserResponse
+from app.models.users_api.user import User # Assumindo que você tem um modelo SQLAlchemy para o usuário
 
 class UserService:
     def __init__(self, db: Session):
+        
         self.db = db
 
     def get_user_by_email(self, email: str) -> Optional[UserResponse]:

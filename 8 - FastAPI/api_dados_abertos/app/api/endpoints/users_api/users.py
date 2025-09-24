@@ -7,8 +7,8 @@ from app.core.dependencies import get_current_user
 # A importação do SQLAlchemy (PostgreSQL) agora vem de seu próprio módulo
 from app.db.postgres.session import get_db
 from app.db.mongodb.session import get_async_mongo_db as get_mongo_db
-from app.schemas.user import UserCreate, UserResponse
-from app.services.user_service import UserService
+from app.schemas.users_api.user import UserCreate, UserResponse
+from app.services.users_api.user_service import UserService
 
 router = APIRouter()
 
@@ -17,7 +17,7 @@ async def get_users(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    mongo_db: AsyncIOMotorDatabase = Depends(get_mongo_db),
+    mongo_db = Depends(get_mongo_db),
     current_user: dict = Depends(get_current_user)
 ):
     """
@@ -31,7 +31,7 @@ async def get_users(
 async def create_user(
     user: UserCreate,
     db: Session = Depends(get_db),
-    mongo_db: AsyncIOMotorDatabase = Depends(get_mongo_db)
+    mongo_db = Depends(get_mongo_db)
 ):
     """
     Criar novo usuário
@@ -50,7 +50,7 @@ async def create_user(
 async def get_user(
     user_id: int,
     db: Session = Depends(get_db),
-    mongo_db: AsyncIOMotorDatabase = Depends(get_mongo_db),
+    mongo_db = Depends(get_mongo_db),
     current_user: dict = Depends(get_current_user)
 ):
     """
@@ -69,7 +69,7 @@ async def update_user(
     user_id: int,
     user_update: UserCreate,
     db: Session = Depends(get_db),
-    mongo_db: AsyncIOMotorDatabase = Depends(get_mongo_db),
+    mongo_db = Depends(get_mongo_db),
     current_user: dict = Depends(get_current_user)
 ):
     """
@@ -88,7 +88,7 @@ async def update_user(
 async def delete_user(
     user_id: int,
     db: Session = Depends(get_db),
-    mongo_db: AsyncIOMotorDatabase = Depends(get_mongo_db),
+    mongo_db = Depends(get_mongo_db),
     current_user: dict = Depends(get_current_user)
 ):
     """
