@@ -1,12 +1,12 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
 
 # Classe base para os dados de usuário
 class UserBase(BaseModel):
     username: str = Field(..., example="john.doe")
-    email: str = Field(..., example="john.doe@example.com")
+    email: EmailStr = Field(..., example="john.doe@example.com")
 
-# Classe para criação de um novo usuário (inclui a senha)
+# Classe para a criação de um novo usuário
 class UserCreate(UserBase):
     password: str = Field(..., example="SenhaForte123")
 
@@ -18,8 +18,8 @@ class UserResponse(UserBase):
     class Config:
         from_attributes = True
 
-# Classe para atualizar um usuário (campos opcionais)
+# Classe para a atualização de um usuário (campos opcionais)
 class UserUpdate(BaseModel):
     username: Optional[str] = None
-    email: Optional[str] = None
+    email: Optional[EmailStr] = None
     is_active: Optional[bool] = None

@@ -12,6 +12,7 @@ motor==3.3.2
 # Validação e schemas
 pydantic==2.5.0
 pydantic-settings==2.1.0
+pydantic[email]==2.5.0
 
 # Utilitários
 python-dotenv==1.0.0

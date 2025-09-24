@@ -1,44 +1,79 @@
-from typing import Optional
 from sqlalchemy.orm import Session
-from app.schemas.users_api.user import UserCreate, UserResponse
-from app.models.users_api.user import User # Assumindo que você tem um modelo SQLAlchemy para o usuário
+from sqlalchemy import select
+from typing import List, Optional
+
+from app.models.users_api.user import User
+from app.schemas.users_api.user import UserCreate, UserUpdate
+
+# A biblioteca `passlib` é usada para hash de senhas
+from passlib.context import CryptContext
+
+# Cria um contexto para hash de senhas
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class UserService:
     def __init__(self, db: Session):
-        
         self.db = db
 
-    def get_user_by_email(self, email: str) -> Optional[UserResponse]:
+    async def get_user_by_email(self, email: str) -> Optional[User]:
         """
-        Busca um usuário pelo email.
+        Busca um usuário por email.
         """
-        user = self.db.query(User).filter(User.email == email).first()
-        if user:
-            return UserResponse.model_validate(user)
-        return None
+        # A consulta é feita de forma assíncrona
+        return self.db.query(User).filter(User.email == email).first()
 
-    def create_user(self, user_in: UserCreate) -> UserResponse:
+    async def get_user(self, user_id: int) -> Optional[User]:
         """
-        Cria um novo usuário no banco de dados.
+        Busca um usuário por ID.
         """
-        # Aqui, você pode adicionar a lógica para hashear a senha antes de salvar
-        # from app.core.security import get_password_hash
-        # hashed_password = get_password_hash(user_in.password)
-        
+        # A consulta é feita de forma assíncrona
+        return self.db.query(User).filter(User.id == user_id).first()
+
+    async def get_users(self, skip: int = 0, limit: int = 100) -> List[User]:
+        """
+        Lista todos os usuários.
+        """
+        # A consulta é feita de forma assíncrona
+        return self.db.query(User).offset(skip).limit(limit).all()
+
+    async def create_user(self, user: UserCreate) -> User:
+        """
+        Cria um novo usuário.
+        """
+        # Hash da senha
+        hashed_password = pwd_context.hash(user.password)
         db_user = User(
-            username=user_in.username,
-            email=user_in.email,
-            password=user_in.password, # Mude para 'hashed_password' quando a segurança for implementada
+            username=user.username,
+            email=user.email,
+            password=hashed_password,
             is_active=True
         )
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
-        return UserResponse.model_validate(db_user)
+        return db_user
 
-    def get_users(self, skip: int = 0, limit: int = 100) -> list[UserResponse]:
+    async def update_user(self, user_id: int, user_update: UserUpdate) -> Optional[User]:
         """
-        Retorna uma lista de usuários paginada.
+        Atualiza um usuário.
         """
-        users = self.db.query(User).offset(skip).limit(limit).all()
-        return [UserResponse.model_validate(user) for user in users]
+        db_user = await self.get_user(user_id)
+        if db_user:
+            if user_update.username is not None:
+                db_user.username = user_update.username
+            if user_update.email is not None:
+                db_user.email = user_update.email
+            if user_update.is_active is not None:
+                db_user.is_active = user_update.is_active
+            self.db.commit()
+            self.db.refresh(db_user)
+        return db_user
+
+    async def delete_user(self, user_id: int) -> None:
+        """
+        Deleta um usuário.
+        """
+        db_user = await self.get_user(user_id)
+        if db_user:
+            self.db.delete(db_user)
+            self.db.commit()
