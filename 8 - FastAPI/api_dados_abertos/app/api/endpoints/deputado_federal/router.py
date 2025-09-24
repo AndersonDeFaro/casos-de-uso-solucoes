@@ -1,7 +1,9 @@
 from fastapi import APIRouter
-# Importa o router do arquivo estado.py, que está na mesma pasta.
+
 from . import estado
+from . import despesa
 
 router = APIRouter(prefix="/deputado_federal", tags=["Deputados Federais"])
 
 router.include_router(estado.router)
+router.include_router(despesa.router)
