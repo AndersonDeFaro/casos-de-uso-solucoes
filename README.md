@@ -1,42 +1,32 @@
-# Estudos Alura Python
+# Casos de Uso e Solucoes
 
-Este projeto reúne exemplos, estudos e automações desenvolvidos durante cursos e práticas com Python, incluindo integração com dados públicos e tratamento de datasets populares.
+Repositório com estudos aplicados, experimentos e exemplos práticos em Python.
+O foco é organizar cenários reais em formato de casos de uso, com soluções reutilizáveis.
 
-## Estrutura de Diretórios
+## Objetivo
 
-- **1 - fundamentos-python/**  
-  Exercícios e exemplos básicos de Python, cobrindo sintaxe, tipos de dados, estruturas de controle e funções.
+- Centralizar exemplos práticos de Python para consulta e evolução contínua.
+- Registrar automações, integrações e análises de dados em contextos reais.
+- Facilitar reaproveitamento de código e aprendizado por tema.
 
-- **2 - projetos/**  
-  Pequenos projetos práticos para fixação dos conceitos aprendidos, como jogos, automações e scripts utilitários.
+## Estrutura
 
-- **3 - web-scraping/**  
-  Scripts e notebooks para coleta de dados na web, utilizando bibliotecas como BeautifulSoup e Selenium.
+- 1 - fundamentos-python/
+- 2 - projetos/
+- 3 - web-scraping/
+- 4 - api/
+- 5 - data-science/
+- 6 - automacoes/
+- 7 - n8n-templates/
 
-- **4 - api/**  
-  Exemplos de consumo e criação de APIs com Python, incluindo integração com serviços externos.
+Cada pasta pode conter scripts, notebooks e documentação local.
 
-- **5 - data-science/**  
-  Notebooks e scripts para análise de dados, visualização, estatística e machine learning com pandas, matplotlib, scikit-learn, etc.
+## Como usar
 
-- **6 - automacoes/**  
-  Fluxos automatizados para tarefas recorrentes, como manipulação de arquivos, envio de e-mails e integração com outros sistemas.
+1. Acesse a pasta do tema que deseja estudar.
+2. Leia os arquivos README locais (quando existirem).
+3. Execute os exemplos e adapte para o seu cenário.
 
-- **7 - n8n-templates/**  
-  Workflows n8n para automação de processos envolvendo dados públicos (dados-abertos) e tratamento de datasets do Kaggle (kaggle-movies).
+## Contribuicoes
 
-    - **dados-abertos/**  
-      Exemplos para exploração de dados públicos brasileiros, como servidores federais e despesas de deputados.
-
-    - **kaggle-movies/**  
-      Workflows para tratamento e ajuste dos dados do dataset "The Movies Dataset" do Kaggle.
-
-## Como Utilizar
-
-1. Navegue pelos diretórios conforme o tema de interesse.
-2. Consulte os arquivos README.md de cada pasta para instruções específicas.
-3. Execute e adapte os exemplos conforme sua necessidade.
-
----
-
-Sugestões e contribuições são
+Sugestões de melhorias e novos casos de uso são bem-vindas.
