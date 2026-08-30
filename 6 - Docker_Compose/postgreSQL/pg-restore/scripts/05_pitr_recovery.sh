@@ -7,7 +7,7 @@ set -e
 RECOVERY_TARGET_TIME="2026-08-29 15:41:59.067003+00"   # <-- coloque o timestamp anotado
 # ============================================
 
-BACKUP_DIR=$(cat ./backups/latest_backup.txt 2>/dev/null || echo "")
+BACKUP_DIR=$(cat ./base_backup/latest_backup.txt 2>/dev/null || echo "")
 
 if [ -z "$BACKUP_DIR" ] || [ ! -d "$BACKUP_DIR" ]; then
   echo "Erro: nenhum base backup encontrado. Execute 02_base_backup.sh primeiro."
@@ -24,11 +24,11 @@ docker compose stop postgres
 
 # 2. Limpar o data directory atual (cuidado!)
 echo "Limpando data directory..."
-rm -rf ./data/*
+rm -rf ./data/pgdata/*
 
 # 3. Restaurar o base backup
 echo "Restaurando base backup..."
-cp -a "$BACKUP_DIR"/* ./data/
+cp -a "$BACKUP_DIR"/* ./data/pgdata/
 
 # 4. Criar o arquivo de recovery (PostgreSQL 12+)
 cat > ./data/recovery.signal <<EOF

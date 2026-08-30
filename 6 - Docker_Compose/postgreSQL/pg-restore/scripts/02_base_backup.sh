@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-BACKUP_DIR="./backups/base_$(date +%Y%m%d_%H%M%S)"
+BACKUP_DIR="./base_backup/base_$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$BACKUP_DIR"
 
 echo "=== Realizando Base Backup ==="
@@ -21,4 +21,3 @@ docker cp pg16-lab:/tmp/basebackup/. "$BACKUP_DIR/"
 docker exec pg16-lab rm -rf /tmp/basebackup
 
 echo "Base backup concluído em: $BACKUP_DIR"
-echo "$BACKUP_DIR" > ./backups/latest_backup.txt

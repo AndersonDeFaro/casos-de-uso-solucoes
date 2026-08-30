@@ -1,3 +1,6 @@
+#!/bin/bash
+
+set -e
 # 1. Preparar e subir
 chmod +x scripts/*.sh
 ./scripts/01_prepare.sh
