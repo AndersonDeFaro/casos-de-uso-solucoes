@@ -21,3 +21,4 @@ docker cp pg16-lab:/tmp/basebackup/. "$BACKUP_DIR/"
 docker exec pg16-lab rm -rf /tmp/basebackup
 
 echo "Base backup concluído em: $BACKUP_DIR"
+echo "$BACKUP_DIR" > ./base_backup/latest_backup.txt

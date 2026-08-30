@@ -31,7 +31,7 @@ echo "Restaurando base backup..."
 cp -a "$BACKUP_DIR"/* ./data/pgdata/
 
 # 4. Criar o arquivo de recovery (PostgreSQL 12+)
-cat > ./data/recovery.signal <<EOF
+cat > ./data/pgdata/recovery.signal <<EOF
 # recovery.signal - força o PostgreSQL a entrar em recovery mode
 EOF
 
