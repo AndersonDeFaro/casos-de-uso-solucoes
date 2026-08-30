@@ -15,5 +15,5 @@ docker compose ps
 #### Acompanhar Logs
 docker compose logs -f
 
-### Link da documentação do docler compose
+### Link da documentação do docker compose
 https://docs.docker.com/compose/compose-file/compose-file-v3/
