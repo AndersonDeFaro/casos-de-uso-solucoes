@@ -36,70 +36,70 @@ services:
       retries: 5
 
   pg-replica1:
-      image: postgres:16-alpine
-      container_name: pg-replica1
-      hostname: pg-replica1
-      restart: always
-      depends_on:
-        pg-primary:
-          condition: service_healthy
-      networks:
-        pg_ha_net:
-          ipv4_address: 172.20.0.3
-      environment:
-        # Só para o entrypoint oficial não reclamar (a réplica não inicializa DB)
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: bdd_pos
-      volumes:
-        - ./pg-replica1/data:/var/lib/postgresql/data
-        - ./pg-replica1/config:/etc/postgresql
-        #- ./pg-replica1/scripts:/scripts
-      entrypoint: ["/bin/bash", "-c"]
-      command:
-        - |
-          set -e
+    image: postgres:16-alpine
+    container_name: pg-replica1
+    hostname: pg-replica1
+    restart: always
+    depends_on:
+      pg-primary:
+        condition: service_healthy
+    networks:
+      pg_ha_net:
+        ipv4_address: 172.20.0.3
+    environment:
+      # Só para o entrypoint oficial não reclamar (a réplica não inicializa DB)
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bdd_pos
+    volumes:
+      - ./pg-replica1/data:/var/lib/postgresql/data
+      - ./pg-replica1/config:/etc/postgresql
+      #- ./pg-replica1/scripts:/scripts
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
 
-          echo ">>> Aguardando o primary ficar disponível..."
-          until pg_isready -h pg-primary -U postgres; do
-            echo "Aguardando Primary..."
-            sleep 2
-          done
+        echo ">>> Aguardando o primary ficar disponível..."
+        until pg_isready -h pg-primary -U postgres; do
+          echo "Aguardando Primary..."
+          sleep 2
+        done
 
-          # Só faz o basebackup se o diretório de dados estiver vazio
-          if [ ! -s /var/lib/postgresql/data/PG_VERSION ]; then
-            echo ">>> Diretório vazio. Fazendo pg_basebackup..."
-            rm -rf /var/lib/postgresql/data/*
+        # Só faz o basebackup se o diretório de dados estiver vazio
+        if [ ! -s /var/lib/postgresql/data/PG_VERSION ]; then
+          echo ">>> Diretório vazio. Fazendo pg_basebackup..."
+          rm -rf /var/lib/postgresql/data/*
 
-            PGPASSWORD='SenhaMestre123#' pg_basebackup \
-              -h pg-primary \
-              -D /var/lib/postgresql/data \
-              -U replicador \
-              -Fp \
-              -Xs \
-              -P \
-              -R \
-              -S replica1_slot   # use o mesmo nome do slot criado no primary (ou remova -S se não quiser slot)
+          PGPASSWORD='SenhaMestre123#' pg_basebackup \
+            -h pg-primary \
+            -D /var/lib/postgresql/data \
+            -U replicador \
+            -Fp \
+            -Xs \
+            -P \
+            -R \
+            -S replica1_slot   # use o mesmo nome do slot criado no primary (ou remova -S se não quiser slot)
 
-            echo ">>> Basebackup concluído."
-          else
-            echo ">>> Dados já existem. Pulando basebackup."
-          fi
+          echo ">>> Basebackup concluído."
+        else
+          echo ">>> Dados já existem. Pulando basebackup."
+        fi
 
-          # Ajusta permissões (importante)
-          chown -R postgres:postgres /var/lib/postgresql/data
-          chmod 700 /var/lib/postgresql/data
+        # Ajusta permissões (importante)
+        chown -R postgres:postgres /var/lib/postgresql/data
+        chmod 700 /var/lib/postgresql/data
 
-          echo ">>> Iniciando PostgreSQL em modo hot standby..."
-          exec docker-entrypoint.sh postgres \
-            -c config_file=/etc/postgresql/postgresql.conf \
-            -c hba_file=/etc/postgresql/pg_hba.conf \
-            -c hot_standby=on \
-            -c hot_standby_feedback=on
-      ports:
-        - "5433:5432"   # porta diferente do primary
-      healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U postgres"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
+        echo ">>> Iniciando PostgreSQL em modo hot standby..."
+        exec docker-entrypoint.sh postgres \
+          -c config_file=/etc/postgresql/postgresql.conf \
+          -c hba_file=/etc/postgresql/pg_hba.conf \
+          -c hot_standby=on \
+          -c hot_standby_feedback=on
+    ports:
+      - "5433:5432"   # porta diferente do primary
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
