@@ -1,14 +1,19 @@
 ### Comandos básicos
 
-#### Subir docker compose
-docker-compose up
-docker-compose up -d # Subir sem verbose
+#### Subir docker compose em segundo plano
+docker compose up -d 
 
 #### Parar docker compose
-docker-compose down
+docker compose down
+
+#### Parar docker compose apagando volumes
+docker compose down -v
 
 #### Verificar composes que estão rodando
-docker-compose ps
+docker compose ps
 
-### Link da documentação do docler compose
+#### Acompanhar Logs
+docker compose logs -f
+
+### Link da documentação do docker compose
 https://docs.docker.com/compose/compose-file/compose-file-v3/

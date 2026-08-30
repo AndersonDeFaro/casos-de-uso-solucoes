@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: pg16-lab
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: SenhaForte@2026
+      POSTGRES_DB: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+      # Configurar fuso do container
+      #TZ: America/Sao_Paulo
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./config:/etc/postgresql
+      - ./scripts:/scripts
+      - ./wal_archive:/var/lib/postgresql/wal_archive
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c hba_file=/etc/postgresql/pg_hba.conf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
