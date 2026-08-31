@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+export PATH="/usr/lib/postgresql/16/bin:$PATH"
+
 COORD="citus-coordenator"
 WORK1="citus-work1"
 WORK2="citus-work2"

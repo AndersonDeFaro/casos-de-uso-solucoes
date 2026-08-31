@@ -7,7 +7,7 @@ networks:
 
 services:
   citus-coordenator:
-    image: citusdata/citus:latest
+    build: .
     container_name: citus-coordenator
     hostname: citus-coordenator
     restart: always
@@ -34,7 +34,7 @@ services:
       retries: 10
 
   citus-work1:
-    image: citusdata/citus:latest
+    build: .
     container_name: citus-work1
     hostname: citus-work1
     restart: always
@@ -62,7 +62,7 @@ services:
       retries: 10
 
   citus-work2:
-    image: citusdata/citus:latest
+    build: .
     container_name: citus-work2
     hostname: citus-work2
     restart: always
@@ -90,7 +90,7 @@ services:
       retries: 10
 
   citus-init:
-    image: citusdata/citus:latest
+    build: .
     container_name: citus-init
     networks:
       - citus_net
