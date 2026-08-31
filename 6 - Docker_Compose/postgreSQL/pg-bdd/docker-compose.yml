@@ -7,7 +7,7 @@ networks:
 
 services:
   pg-primary:
-    image: postgres:16-alpine
+    image: postgres:16
     container_name: pg-bdd-primary
     hostname: pg-bdd-primary
     restart: always
@@ -36,7 +36,7 @@ services:
       retries: 5
 
   pg-replica1:
-    image: postgres:16-alpine
+    image: postgres:16
     container_name: pg-replica1
     hostname: pg-replica1
     restart: always
@@ -46,6 +46,8 @@ services:
     networks:
       pg_ha_net:
         ipv4_address: 172.20.0.3
+    cap_add:
+      - NET_ADMIN # Acesso de rede necessário para o pg_rewind (se for usado)
     environment:
       # Só para o entrypoint oficial não reclamar (a réplica não inicializa DB)
       POSTGRES_USER: postgres
@@ -80,6 +82,12 @@ services:
             -P \
             -R \
             -S replica1_slot   # use o mesmo nome do slot criado no primary (ou remova -S se não quiser slot)
+
+          # Garante application_name correto
+          echo "primary_conninfo = 'host=pg-primary port=5432 user=replicador password=SenhaMestre123# application_name=pg-replica1'" \
+            > /var/lib/postgresql/data/postgresql.auto.conf
+          echo "primary_slot_name = 'replica1_slot'" \
+            >> /var/lib/postgresql/data/postgresql.auto.conf
 
           echo ">>> Basebackup concluído."
         else

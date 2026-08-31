@@ -8,7 +8,6 @@
  - `-P`: Mostra progresso
  - `-S slot`: Usa um replication slot (recomendado)
 
-
 ## Comandos Docker
 
 ### Subir tudo
@@ -25,6 +24,17 @@ docker exec -it pg-replica1 psql -U postgres -d
 
 bdd_pos -c "SELECT pg_is_in_recovery();"
 ##### deve retornar 't' (true)
+
+## Parametros Importante no Docker
+
+### Ajustar nome da replicar pra configurar sicronização
+```
+# Garante application_name correto
+echo "primary_conninfo = 'host=pg-primary port=5432 user=replicador password=SenhaMestre123# application_name=pg-replica1'" \
+> /var/lib/postgresql/data/postgresql.auto.conf
+echo "primary_slot_name = 'replica1_slot'" \
+>> /var/lib/postgresql/data/postgresql.auto.conf
+```            
 
 ## Scripts pra verificar se a replica está funcionando
 
