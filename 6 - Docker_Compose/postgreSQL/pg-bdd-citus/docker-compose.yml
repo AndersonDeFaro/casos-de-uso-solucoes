@@ -1,0 +1,109 @@
+networks:
+  citus_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+
+services:
+  citus-coordenator:
+    image: citusdata/citus:latest
+    container_name: citus-coordenator
+    hostname: citus-coordenator
+    restart: always
+    networks:
+      citus_net:
+        ipv4_address: 172.30.0.2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: citus
+    ports:
+      - "5440:5432"
+    volumes:
+      - ./citus-coordenator/data:/var/lib/postgresql/data
+      - ./citus-coordenator/config:/etc/postgresql
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c hba_file=/etc/postgresql/pg_hba.conf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  citus-work1:
+    image: citusdata/citus:latest
+    container_name: citus-work1
+    hostname: citus-work1
+    restart: always
+    networks:
+      citus_net:
+        ipv4_address: 172.30.0.3
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: citus
+    volumes:
+      - ./citus-work1/data:/var/lib/postgresql/data
+      - ./citus-work1/config:/etc/postgresql
+    depends_on:
+      citus-coordenator:
+        condition: service_healthy
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c hba_file=/etc/postgresql/pg_hba.conf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  citus-work2:
+    image: citusdata/citus:latest
+    container_name: citus-work2
+    hostname: citus-work2
+    restart: always
+    networks:
+      citus_net:
+        ipv4_address: 172.30.0.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: citus
+    volumes:
+      - ./citus-work2/data:/var/lib/postgresql/data
+      - ./citus-work2/config:/etc/postgresql
+    depends_on:
+      citus-coordenator:
+        condition: service_healthy
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c hba_file=/etc/postgresql/pg_hba.conf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  citus-init:
+    image: citusdata/citus:latest
+    container_name: citus-init
+    networks:
+      - citus_net
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./citus-init/init-citus.sh:/init-citus.sh:ro
+    depends_on:
+      citus-coordenator:
+        condition: service_healthy
+      citus-work1:
+        condition: service_healthy
+      citus-work2:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "/init-citus.sh"]
+    restart: "no"
