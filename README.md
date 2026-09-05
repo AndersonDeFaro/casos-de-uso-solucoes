@@ -1,32 +1,32 @@
 # Casos de Uso e Solucoes
 
-Repositório com estudos aplicados, experimentos e exemplos práticos em Python.
-O foco é organizar cenários reais em formato de casos de uso, com soluções reutilizáveis.
+Repositório de estudos, projetos e exemplos práticos voltados a dados, automação, bancos de dados e desenvolvimento com Python. O material está organizado por tema e inclui notebooks, pipelines, containers e templates reutilizáveis.
 
-## Objetivo
+## Organização
 
-- Centralizar exemplos práticos de Python para consulta e evolução contínua.
-- Registrar automações, integrações e análises de dados em contextos reais.
-- Facilitar reaproveitamento de código e aprendizado por tema.
+- [Python Data Science](1%20-%20Python_Data_Science/): fundamentos de NumPy e Pandas, visualização, NLP, web scraping e TensorFlow.
+- [Formação Data Science](2%20-%20Formacao_Data_Science/): introdução, estatística e regressão linear.
+- [Databases](3%20-%20Databases/): estudos com Databricks e MongoDB.
+- [AnalisesAPP](4%20-%20AnalisesAPP/): pipelines e workflows com Apache Hop e Pentaho PDI.
+- [Containers](5%20-%20Containers/): exemplos de Docker e Docker Compose, incluindo uma API FastAPI.
+- [Templates](6%20-%20Templates/): workflows n8n para dados abertos e tratamento de datasets.
+- [Análises Pessoais](99%20-%20Analises-Pessoais/): explorações de criptomoedas, leilões e mercado financeiro.
 
-## Estrutura
+## Como utilizar
 
-- 1 - fundamentos-python/
-- 2 - projetos/
-- 3 - web-scraping/
-- 4 - api/
-- 5 - data-science/
-- 6 - automacoes/
-- 7 - n8n-templates/
+1. Escolha a área de interesse na seção anterior.
+2. Consulte o README local, quando disponível, e abra os notebooks ou arquivos de configuração correspondentes.
+3. Crie um ambiente Python isolado antes de executar notebooks ou projetos que tenham dependências.
+4. Para exemplos com serviços externos, configure as variáveis de ambiente e as credenciais necessárias sem versioná-las.
 
-Cada pasta pode conter scripts, notebooks e documentação local.
+## Tecnologias presentes
 
-## Como usar
+Python, Jupyter Notebook, NumPy, Pandas, TensorFlow, MongoDB, Databricks, Docker, Docker Compose, FastAPI, Apache Hop, Pentaho PDI e n8n.
 
-1. Acesse a pasta do tema que deseja estudar.
-2. Leia os arquivos README locais (quando existirem).
-3. Execute os exemplos e adapte para o seu cenário.
+## Observações
 
-## Contribuicoes
+Os diretórios reúnem materiais de estudo e experimentação. Dados, endpoints e credenciais de serviços externos podem exigir configuração própria antes da execução.
 
-Sugestões de melhorias e novos casos de uso são bem-vindas.
+## Contribuições
+
+Melhorias na documentação, novos casos de uso e correções são bem-vindos. Mantenha cada alteração focada no tema do diretório e documente pré-requisitos quando forem necessários.
