@@ -1,27 +1,33 @@
-# Dados Abertos
+# Workflows n8n para Dados Abertos
 
-Esta pasta contém exemplos para exploração de dados públicos relacionados à transparência de servidores federais e despesas de deputados federais.
+Workflows para consultar e organizar informações públicas sobre servidores federais, deputados e despesas parlamentares. O conjunto combina consultas, cargas paginadas e fluxos de apoio a análises com IA.
 
-## Exemplos Disponíveis
+## Arquivos disponíveis
 
-- **Servidores Federais:** Scripts e templates para acessar, filtrar e analisar informações sobre servidores públicos federais, como cargos, salários e lotações.
-- **Despesas de Deputados Federais:** Ferramentas para consultar e visualizar os gastos dos deputados federais, incluindo diárias, passagens, serviços gráficos, entre outros.
+### Servidores federais
 
-## Objetivo
+- `dados-ai-servidor-federal.json`: consulta e preparação de dados para uso com IA.
+- `orgao-servidor-federal-start.json`: ponto de entrada da carga de órgãos e servidores.
+- `orgao-servidor-federal-loop.json`: processamento paginado da carga de órgãos e servidores.
 
-Facilitar o acesso e análise dos dados abertos disponibilizados pelo governo, promovendo transparência e controle social.
+### Deputados e despesas
 
-## Como Utilizar
+- `ai-query-deputados.json`: consultas sobre deputados com apoio de IA.
+- `ai-query-despesas-deputados.json`: consultas sobre despesas parlamentares com apoio de IA.
+- `carga-despesas-deputados-federais-start.json`: ponto de entrada da carga de despesas.
+- `carga-despesas-deputados-federais-loop.json`: processamento paginado das despesas.
 
-1. Navegue pelos exemplos na pasta.
-2. Siga as instruções de cada arquivo para executar os fluxos.
-3. Personalize conforme sua necessidade para diferentes consultas ou visualizações.
+### Fluxo de exemplo
 
-## Fontes dos Dados
+- `ai-curiozinho-transparencia.json`: exemplo de interação sobre dados de transparência.
 
-- Portal da Transparência do Governo Federal
-- Câmara dos Deputados
+## Como utilizar
 
-## Contribuição
+1. Importe o arquivo JSON no n8n.
+2. Configure as credenciais e conexões requeridas pelos nós.
+3. Execute primeiro os workflows com sufixo `start` e acompanhe os fluxos com sufixo `loop`.
+4. Valide os registros gerados antes de agendar ou ativar uma execução recorrente.
 
-Sugestões e melhorias são bem-vindas! Abra uma issue ou envie um pull request.
+## Fontes
+
+Os fluxos foram preparados para trabalhar com dados públicos, incluindo informações disponibilizadas pelo Portal da Transparência e pela Câmara dos Deputados. Verifique os nós HTTP de cada workflow para confirmar endpoints, limites e formatos vigentes.

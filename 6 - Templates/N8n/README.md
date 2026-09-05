@@ -1,38 +1,26 @@
-# 7 - n8n-templates
+# Templates n8n
 
-Este diretório reúne exemplos de workflows n8n para automação e tratamento de dados em diferentes contextos.
+Coleção de workflows n8n para ingestão, consulta, transformação e enriquecimento de dados. Os arquivos JSON podem ser importados diretamente na interface do n8n e adaptados ao ambiente de destino.
 
-## Objetivo
+## Conteúdo
 
-Facilitar a integração, transformação e análise de dados públicos e de datasets populares, utilizando fluxos automatizados e personalizáveis.
+- [dados-abertos](dados-abertos/): consultas e cargas relacionadas a servidores federais, deputados e despesas parlamentares.
+- [kaggle-movies](kaggle-movies/): normalização de campos JSON do The Movies Dataset em MongoDB.
+- `export-n8n-data.json`: exportação de workflows relacionados a dados.
+- `import-n8n-workflows.json`: arquivo para importação de workflows no n8n.
 
-## Subdiretórios
+## Como importar
 
-### dados-abertos
+1. Abra o n8n e acesse a área de workflows.
+2. Use a opção de importar a partir de arquivo.
+3. Selecione o JSON desejado neste diretório ou em um subdiretório.
+4. Configure credenciais, URLs e bancos de dados do seu ambiente.
+5. Revise os nós que gravam ou removem dados antes de ativar o workflow.
 
-Contém exemplos para exploração de dados públicos brasileiros, como:
+## Pré-requisitos
 
-- **Servidores Federais:** Scripts e templates para acessar, filtrar e analisar informações sobre servidores públicos federais (cargos, salários, lotações).
-- **Despesas de Deputados Federais:** Ferramentas para consultar e visualizar os gastos dos deputados federais (diárias, passagens, serviços gráficos, etc).
+- Instância n8n disponível.
+- Credenciais para as fontes de dados utilizadas por cada fluxo.
+- MongoDB configurado para os workflows que persistem dados tratados.
 
-O objetivo é promover transparência e controle social, facilitando o acesso e análise dos dados abertos disponibilizados pelo governo.
-
-### kaggle-movies
-
-Inclui workflows para tratamento e ajuste dos dados do dataset [The Movies Dataset](https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset/data?select=movies_metadata.csv), disponível no Kaggle.
-
-Principais funcionalidades:
-
-- Conversão de campos JSON armazenados como string para objetos/arrays válidos.
-- Atualização dos registros tratados em banco de dados (MongoDB).
-- Remoção de duplicidades e padronização dos dados para facilitar análises futuras.
-
-## Como Utilizar
-
-1. Acesse o subdiretório desejado.
-2. Siga as instruções do README de cada pasta para executar os workflows.
-3. Personalize os fluxos conforme sua necessidade.
-
----
-
-Sugestões e contribuições são bem-
+Cada subdiretório possui detalhes sobre a finalidade e os arquivos correspondentes.
