@@ -1,4 +1,4 @@
---- PAsso 1
+--- Passo 1
 CREATE SCHEMA rh;
 CREATE SCHEMA vendas;
 CREATE SCHEMA financeiro;
@@ -46,7 +46,7 @@ CREATE TABLE vendas.pedidos (
     cliente TEXT,
     valor NUMERIC(12,2),
     data_pedido DATE DEFAULT CURRENT_DATE
-)
+);
 
 --- Passo 7
 -- RH
