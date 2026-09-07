@@ -1,0 +1,1 @@
+GRANT SELECT ON ALL TABLES IN SCHEMA rh TO grp_rh_read;
