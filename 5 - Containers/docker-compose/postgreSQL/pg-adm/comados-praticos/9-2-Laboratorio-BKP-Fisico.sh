@@ -40,7 +40,7 @@ docker exec -it pg16-lab pg_basebackup \
 -U postgres \
 -D /tmp/base_backup \
 -Fp \
-88-X stream \
+-X stream \
 -P
 
 #### Copiar resultado do backup físico para o host

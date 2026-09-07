@@ -9,7 +9,7 @@ docker exec -i pg16-lab pg_dump -U postgres -Fc -d postgres > ./backups/postgres
 ### OPs 2 - Dentro do container (não recomendado)
 docker exec -it pg16-lab bash
 pg_dump -U postgres -Fc -d postgres -f /tmp/postgres_completo.dump
-exit
+
 # Copiar para o host
 docker cp pg16-lab:/tmp/postgres_completo.dump ./backups/
 
